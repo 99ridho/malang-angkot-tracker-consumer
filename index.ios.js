@@ -4,14 +4,10 @@
  * @flow
  */
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-
 import { MalangAngkotTrackerNav } from './src/navigator';
+import { configureFirebase } from './src/utils/firebase_config';
+import { AppRegistry } from 'react-native';
+
+configureFirebase();
 
 AppRegistry.registerComponent('MalangAngkotTracker', () => MalangAngkotTrackerNav);
