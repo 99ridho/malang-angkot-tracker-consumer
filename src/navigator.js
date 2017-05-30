@@ -4,29 +4,30 @@ import AngkotMap from './screens/AngkotMap';
 import DaftarAngkot from './screens/DaftarAngkot';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import React from 'react';
+import { Platform } from 'react-native';
 
 const AppTabNavigator = TabNavigator({
-    AngkotMap: {
-        screen: AngkotMap,
-        navigationOptions: {
-            title: 'Angkot Map',
-            tabBarIcon: <Icon name="map-o" size={24}/>
-        }
-    },
-    DaftarAngkot: {
-        screen: DaftarAngkot,
-        navigationOptions: {
-            title: 'List Trayek',
-            tabBarIcon: <Icon name="th-list" size={24}/>
-        }
+  AngkotMap: {
+    screen: AngkotMap,
+    navigationOptions: {
+      title: 'Angkot Map',
+      tabBarIcon: <Icon name="map-o" size={24} />
     }
+  },
+  DaftarAngkot: {
+    screen: DaftarAngkot,
+    navigationOptions: {
+      title: 'List Trayek',
+      tabBarIcon: <Icon name="th-list" size={24} />
+    }
+  }
 }, {
     tabBarOptions: {
-        showLabel: false,
-        activeBackgroundColor: '#BBDEFB'
+      showLabel: Platform.OS == 'android',
+      activeBackgroundColor: '#BBDEFB'
     }
-});
+  });
 
 export const MalangAngkotTrackerNav = StackNavigator({
-    Home: { screen: AppTabNavigator }
+  Home: { screen: AppTabNavigator }
 });
