@@ -18,7 +18,8 @@ export default class DaftarAngkot extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      listViewDataSource: this.ds.cloneWithRows([])
+      listViewDataSource: this.ds.cloneWithRows([]),
+      dataAngkot: {}
     };
   }
 
@@ -27,8 +28,10 @@ export default class DaftarAngkot extends Component {
     const trayekDatabaseRef = firebase.database().ref('trayek_angkot');
     trayekDatabaseRef.on('value', snapshot => {
       console.log(snapshot.val());
+      console.log(Object.keys(snapshot.val()));
       this.setState({
-        listViewDataSource: this.ds.cloneWithRows(snapshot.val())
+        listViewDataSource: this.ds.cloneWithRows(Object.keys(snapshot.val())),
+        dataAngkot: snapshot.val()
       })
     });
   }
@@ -39,7 +42,7 @@ export default class DaftarAngkot extends Component {
         <ListView
           dataSource={this.state.listViewDataSource}
           renderRow={
-            (rowData, sectionId, rowId) => <Row id={rowId} title={rowData.kode} subtitle={rowData.nama} onRowTap={this._onRowSelected.bind(this, rowId, rowData)} />
+            (rowData, sectionId, rowId) => <Row id={rowId} title={this.state.dataAngkot[rowData].kode} subtitle={this.state.dataAngkot[rowData].nama} onRowTap={this._onRowSelected.bind(this, rowId, rowData)} />
           }
           renderSeparator={
             (sectionId, rowId) => <View style={rowStyle.separator} />
@@ -52,12 +55,13 @@ export default class DaftarAngkot extends Component {
 
   _onRowSelected(rowId, rowData) {
     console.log("Row id : " + rowId);
-    console.log("Row data : " + rowData.nama);
-    Alert.alert(
-      "Info",
-      `Info : ${rowId} - ${rowData.nama}`,
-      [{ text: "Ok", onPress: () => console.log('ok') }]
-    )
+    console.log("Row data : " + rowData);
+    // Alert.alert(
+    //   "Info",
+    //   `Info : ${rowId} - ${rowData}`,
+    //   [{ text: "Ok", onPress: () => console.log('ok') }]
+    // )
+    this.props.navigation.navigate('TrayekMap', { kodeAngkot: rowData });
   }
 
 }

@@ -13,8 +13,8 @@ export default class AngkotMap extends Component {
   render() {
     return (
       <MapView initialRegion={{
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: -7.9710882,
+        longitude: 112.62604,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       }}
