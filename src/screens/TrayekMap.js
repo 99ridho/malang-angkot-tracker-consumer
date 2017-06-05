@@ -6,11 +6,17 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MapView from 'react-native-maps';
+import { geocodeAddress } from '../api/gmaps_geocoding';
 
 export default class TrayekMap extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      trayekRuteMasukCoordinates: [],
+      trayekRuteKeluarCoordinates: []
+    }
   }
 
   static navigationOptions = ({navigation}) => {
@@ -23,6 +29,39 @@ export default class TrayekMap extends Component {
   componentDidMount() {
     const trayek = this.props.navigation.state.detailTrayekAngkot;
     console.log(trayek);
+
+    const trayekRuteMasuk = trayek.rute_masuk.map(r => r + " " + trayek.kota);
+    const trayekRuteKeluar = trayek.rute_keluar.map(r => r + " " + trayek.kota);
+
+    trayekRuteMasuk.forEach(rute => {
+      geocodeAddress(rute)
+        .then(responseGeocodeJson => {
+          const coordinates = {
+            latitude: responseGeocodeJson[0].geometry.location.lat,
+            longitue: responseGeocodeJson[0].geometry.location.lng,
+          }
+
+          console.log("Rute : "+rute, coordinates);
+
+          this.setState({
+            trayekRuteMasukCoordinates: [...this.state.trayekRuteMasukCoordinates, coordinates]
+          });
+        });
+    });
+
+    trayekRuteKeluar.forEach(rute => {
+      geocodeAddress(rute)
+        .then(responseGeocodeJson => {
+          const coordinates = {
+            latitude: responseGeocodeJson[0].geometry.location.lat,
+            longitue: responseGeocodeJson[0].geometry.location.lng,
+          }
+
+          this.setState({
+            trayekRuteKeluarCoordinates: [...this.state.trayekRuteKeluarCoordinates, coordinates]
+          });
+        });
+    });
   }
 
   render() {
