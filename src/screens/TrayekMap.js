@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View
+  View,
+  Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MapView from 'react-native-maps';
@@ -15,7 +16,8 @@ export default class TrayekMap extends Component {
 
     this.state = {
       trayekRuteMasukLocations: [],
-      trayekRuteKeluarLocations: []
+      trayekRuteKeluarLocations: [],
+      jalur: ''
     }
   }
 
@@ -27,6 +29,10 @@ export default class TrayekMap extends Component {
   }
 
   componentDidMount() {
+    this.setTrayekCoordinates();
+  }
+
+  setTrayekCoordinates() {
     const trayek = this.props.navigation.state.params.dataTrayekAngkot;
     console.log(trayek);
 
@@ -70,12 +76,17 @@ export default class TrayekMap extends Component {
           });
         });
     });
+
+    Alert.alert("Opsi", "Plot jalur mana yang ingin ditampilkan?",[
+      {text: 'Jalur Masuk', onPress: () => {this.setState({jalur: 'masuk'})}},
+      {text: 'Jalur Keluar', onPress: () => {this.setState({jalur: 'keluar'})}}
+    ])
   }
 
   render() {
     return(
       <View style={{flex: 1}}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
           <Text style={{fontSize: 15}}>Jalur Angkot {this.props.navigation.state.params.dataTrayekAngkot.kode}</Text>
         </View>
         <View style={{ flex: 9, alignItems: 'center', justifyContent: 'center', backgroundColor: 'powderblue' }}>
@@ -87,33 +98,35 @@ export default class TrayekMap extends Component {
           }}
           style={styles.map}>
 
-            {this.state.trayekRuteMasukLocations.map(loc => (
-              <MapView.Marker 
-                coordinate={loc.coordinate}
-                title={loc.rute}
-                pinColor='blue'
-              />
-            ))}
+          {
+            (this.state.jalur == 'masuk') ?
+              this.state.trayekRuteMasukLocations.map((loc, i) => (
+                <MapView.Marker 
+                  coordinate={loc.coordinate}
+                  title={loc.rute}
+                  pinColor='blue'
+                />
+              )) :
+              this.state.trayekRuteKeluarLocations.map(loc => (
+                <MapView.Marker 
+                  coordinate={loc.coordinate}
+                  title={loc.rute}
+                  pinColor='red'
+                />
+              ))
+          }
 
-            {this.state.trayekRuteKeluarLocations.map(loc => (
-              <MapView.Marker 
-                coordinate={loc.coordinate}
-                title={loc.rute}
-                pinColor='red'
-              />
-            ))}
-
-            <MapView.Polyline 
+            {/*<MapView.Polyline 
               coordinates={this.state.trayekRuteKeluarLocations.map(loc => loc.coordinate)}
               strokeWidth={1}
               strokeColor='red'
-            />
+            />*/}
 
-            <MapView.Polyline 
+            {/*<MapView.Polyline 
               coordinates={this.state.trayekRuteMasukLocations.map(loc => loc.coordinate)}
               strokeWidth={1}
               strokeColor='blue'
-            />
+            />*/}
 
           </MapView>
         </View>
