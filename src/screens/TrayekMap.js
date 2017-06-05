@@ -14,8 +14,8 @@ export default class TrayekMap extends Component {
     super(props);
 
     this.state = {
-      trayekRuteMasukCoordinates: [],
-      trayekRuteKeluarCoordinates: []
+      trayekRuteMasukLocations: [],
+      trayekRuteKeluarLocations: []
     }
   }
 
@@ -27,7 +27,7 @@ export default class TrayekMap extends Component {
   }
 
   componentDidMount() {
-    const trayek = this.props.navigation.state.detailTrayekAngkot;
+    const trayek = this.props.navigation.state.params.dataTrayekAngkot;
     console.log(trayek);
 
     const trayekRuteMasuk = trayek.rute_masuk.map(r => r + " " + trayek.kota);
@@ -36,15 +36,18 @@ export default class TrayekMap extends Component {
     trayekRuteMasuk.forEach(rute => {
       geocodeAddress(rute)
         .then(responseGeocodeJson => {
-          const coordinates = {
-            latitude: responseGeocodeJson[0].geometry.location.lat,
-            longitue: responseGeocodeJson[0].geometry.location.lng,
-          }
+          const locations = {
+            rute: rute,
+            coordinate: {
+              latitude: responseGeocodeJson.results[0].geometry.location.lat,
+              longitude: responseGeocodeJson.results[0].geometry.location.lng,
+            }
+          };
 
-          console.log("Rute : "+rute, coordinates);
+          console.log("Rute masuk : "+rute, locations);
 
           this.setState({
-            trayekRuteMasukCoordinates: [...this.state.trayekRuteMasukCoordinates, coordinates]
+            trayekRuteMasukLocations: [...this.state.trayekRuteMasukLocations, locations]
           });
         });
     });
@@ -52,13 +55,18 @@ export default class TrayekMap extends Component {
     trayekRuteKeluar.forEach(rute => {
       geocodeAddress(rute)
         .then(responseGeocodeJson => {
-          const coordinates = {
-            latitude: responseGeocodeJson[0].geometry.location.lat,
-            longitue: responseGeocodeJson[0].geometry.location.lng,
-          }
+          const locations = {
+            rute: rute,
+            coordinate: {
+              latitude: responseGeocodeJson.results[0].geometry.location.lat,
+              longitude: responseGeocodeJson.results[0].geometry.location.lng,
+            }
+          };
+
+          console.log("Rute keluar : "+rute, locations);
 
           this.setState({
-            trayekRuteKeluarCoordinates: [...this.state.trayekRuteKeluarCoordinates, coordinates]
+            trayekRuteKeluarLocations: [...this.state.trayekRuteKeluarLocations, locations]
           });
         });
     });
@@ -77,7 +85,37 @@ export default class TrayekMap extends Component {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
-          style={styles.map} />
+          style={styles.map}>
+
+            {this.state.trayekRuteMasukLocations.map(loc => (
+              <MapView.Marker 
+                coordinate={loc.coordinate}
+                title={loc.rute}
+                pinColor='blue'
+              />
+            ))}
+
+            {this.state.trayekRuteKeluarLocations.map(loc => (
+              <MapView.Marker 
+                coordinate={loc.coordinate}
+                title={loc.rute}
+                pinColor='red'
+              />
+            ))}
+
+            <MapView.Polyline 
+              coordinates={this.state.trayekRuteKeluarLocations.map(loc => loc.coordinate)}
+              strokeWidth={1}
+              strokeColor='red'
+            />
+
+            <MapView.Polyline 
+              coordinates={this.state.trayekRuteMasukLocations.map(loc => loc.coordinate)}
+              strokeWidth={1}
+              strokeColor='blue'
+            />
+
+          </MapView>
         </View>
       </View>
     );
