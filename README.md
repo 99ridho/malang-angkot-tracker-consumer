@@ -2,7 +2,7 @@
 
 Consumer side of this application. 
 
-This is intended for Project Management Course Final Project, hopefully this app can be used by Malang citizens as open source app. Amiin :)
+This is intended for Project Management Course Final Project.
 
 ## Planned Tech Stack
 
