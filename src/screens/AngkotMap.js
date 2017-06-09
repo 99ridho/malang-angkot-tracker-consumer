@@ -53,6 +53,7 @@ export default class AngkotMap extends Component {
             coordinate={{latitude: pos.latitude, longitude: pos.longitude}}
             title={pos.kode_angkot.toUpperCase()}
             pinColor='blue'
+            image={require('../assets/bus.png')}
           />
         ))
       }

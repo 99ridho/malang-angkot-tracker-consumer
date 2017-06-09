@@ -83,6 +83,64 @@ export default class TrayekMap extends Component {
     ])
   }
 
+  _renderRuteAngkotMarkers() {
+    return (this.state.jalur == 'masuk') ?
+              this.state.trayekRuteMasukLocations.map((loc, i) => (
+                <MapView.Marker 
+                  coordinate={loc.coordinate}
+                  title={`${i+1} - ${loc.rute}`}
+                  pinColor='blue'
+                />
+              )) : (this.state.jalur == 'keluar') ?
+              this.state.trayekRuteKeluarLocations.map((loc, i) => (
+                <MapView.Marker 
+                  coordinate={loc.coordinate}
+                  title={`${i+1} - ${loc.rute}`}
+                  pinColor='red'
+                />
+              )) : null
+  }
+
+  _renderRuteAngkotPolylines(tipeJalur) {
+    if (tipeJalur == 'masuk') {
+      const coordinates = this.state.trayekRuteMasukLocations.map(loc => loc.coordinate);
+      const rutePolylines = [];
+
+      for (let i = 0 ; i < coordinates.length - 1 ; i++) {
+        const polyline = (
+          <MapView.Polyline 
+            strokeWidth={1}
+            strokeColor='blue'
+            coordinates={[coordinates[i], coordinates[i+1]]}
+          />
+        );
+
+        rutePolylines.push(polyline);
+      }
+
+      return rutePolylines;
+    } else if (tipeJalur == 'keluar') {
+      const coordinates = this.state.trayekRuteKeluarLocations.map(loc => loc.coordinate);
+      const rutePolylines = [];
+
+      for (let i = 0 ; i < coordinates.length - 1 ; i++) {
+        const polyline = (
+          <MapView.Polyline 
+            strokeWidth={1}
+            strokeColor='red'
+            coordinates={[coordinates[i], coordinates[i+1]]}
+          />
+        );
+
+        rutePolylines.push(polyline);
+      }
+
+      return rutePolylines;
+    }
+
+    return null;
+  }
+
   render() {
     return(
       <View style={{flex: 1}}>
@@ -99,34 +157,12 @@ export default class TrayekMap extends Component {
           style={styles.map}>
 
           {
-            (this.state.jalur == 'masuk') ?
-              this.state.trayekRuteMasukLocations.map((loc, i) => (
-                <MapView.Marker 
-                  coordinate={loc.coordinate}
-                  title={loc.rute}
-                  pinColor='blue'
-                />
-              )) :
-              this.state.trayekRuteKeluarLocations.map(loc => (
-                <MapView.Marker 
-                  coordinate={loc.coordinate}
-                  title={loc.rute}
-                  pinColor='red'
-                />
-              ))
+            this._renderRuteAngkotMarkers()
           }
 
-            {/*<MapView.Polyline 
-              coordinates={this.state.trayekRuteKeluarLocations.map(loc => loc.coordinate)}
-              strokeWidth={1}
-              strokeColor='red'
-            />*/}
-
-            {/*<MapView.Polyline 
-              coordinates={this.state.trayekRuteMasukLocations.map(loc => loc.coordinate)}
-              strokeWidth={1}
-              strokeColor='blue'
-            />*/}
+          {
+            this._renderRuteAngkotPolylines(this.state.jalur)
+          }
 
           </MapView>
         </View>
